@@ -8,23 +8,61 @@ public class HUD : MonoBehaviour
     public InfoType type;
 
     Text myText;
-    Slider mySlider;
+    private Slider mySlider;
 
     void Awake()
     {
         myText = GetComponent<Text>();
-        mySlider = GetComponent<Slider>();
+        // if (mySlider == null)
+        // {
+        //     Debug.LogWarning($"HUD Slider not found!");
+        //     mySlider = GetComponentInChildren<Slider>(true);
+        // }
+        // if (mySlider == null)
+        // {
+        //     Slider[] sliders = GetComponentsInChildren<Slider>(true);
+        //     if (sliders.Length > 0)
+        //     {
+        //         mySlider = sliders[0];
+        //     }
+        //     else
+        //     {
+        //         Debug.LogWarning("HUD Slider not found in children!");
+        //     }
+        // }
+        var sliders = GetComponentsInChildren<Slider>();
+            for (int i = 0; i < sliders.Length; i++)
+            {
+                if (sliders[i].name == "HUD")
+                {
+                    mySlider = sliders[i];
+                }
+                Debug.Log("Slider found: " + sliders[i].name);
+            }
+    }  
+    
+    void Start()
+    {
+        // Debug.LogWarning($"HUD ({type}) Slider not found!");
     }
 
     void LateUpdate()
     {
+        
         switch (type)
         {
             case InfoType.Exp:
-                float curExp = GameManager.instance.exp;
-                float maxExp = GameManager.instance.nextExp[GameManager.instance.level];
-                mySlider.value = curExp / maxExp;
-                break;
+                if (mySlider == null)
+                {
+                   Debug.LogWarning($"(Switch) HUD Slider not found!");
+                }
+                else
+                {
+                    float curExp = GameManager.instance.exp;
+                    float maxExp = GameManager.instance.nextExp[Mathf.Min(GameManager.instance.level, GameManager.instance.nextExp.Length - 1)];
+                    mySlider.value = curExp / maxExp;
+                }
+                    break;
             case InfoType.Level:
                 myText.text = string.Format("Lv.{0:F0}", GameManager.instance.level);
                 break;

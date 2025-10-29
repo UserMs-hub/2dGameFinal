@@ -21,15 +21,23 @@ public class Player : MonoBehaviour
         scanner = GetComponent<Scanner>();
         hands = GetComponentsInChildren<Hand>(true);    
     }
-    
+
     void OnMove(InputValue value)
     {
         inputVec = value.Get<Vector2>();
     }
 
+    void Update()
+    {
+        if (!GameManager.instance.isLive)
+            return;
+    }
+
 
     void FixedUpdate()
     {
+        if (!GameManager.instance.isLive)
+            return;
 
         Vector2 nextVec = inputVec * speed * Time.fixedDeltaTime;
         // 위치 이동
