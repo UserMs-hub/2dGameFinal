@@ -8,7 +8,7 @@ public class HUD : MonoBehaviour
     public InfoType type;
 
     Text myText;
-    private Slider mySlider;
+    public Slider mySlider;
 
     void Awake()
     {
@@ -30,15 +30,15 @@ public class HUD : MonoBehaviour
         //         Debug.LogWarning("HUD Slider not found in children!");
         //     }
         // }
-        var sliders = GetComponentsInChildren<Slider>();
-            for (int i = 0; i < sliders.Length; i++)
-            {
-                if (sliders[i].name == "HUD")
-                {
-                    mySlider = sliders[i];
-                }
-                Debug.Log("Slider found: " + sliders[i].name);
-            }
+        // var sliders = GetComponentsInChildren<Slider>();
+        //     for (int i = 0; i < sliders.Length; i++)
+        //     {
+        //         if (sliders[i].name == "HUD")
+        //         {
+        //             mySlider = sliders[i];
+        //         }
+        //         Debug.Log("Slider found: " + sliders[i].name);
+        //     }
     }  
     
     void Start()
@@ -54,7 +54,7 @@ public class HUD : MonoBehaviour
             case InfoType.Exp:
                 if (mySlider == null)
                 {
-                   Debug.LogWarning($"(Switch) HUD Slider not found!");
+                   
                 }
                 else
                 {
