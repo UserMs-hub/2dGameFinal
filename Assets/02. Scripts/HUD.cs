@@ -1,86 +1,106 @@
+// using UnityEngine;
+// using UnityEngine.UI;
+
+// public class HUD : MonoBehaviour
+// {
+
+//     public enum InfoType { Exp, Level, Kill, Time, Health }
+//     public InfoType type;
+
+//     public Slider expSlider;
+//     public Slider healthSlider;
+//     public Text levelText;
+//     public Text killText;
+//     public Text timeText;
+
+//     void Awake()
+//     {
+        
+//     }  
+    
+//     void Start()
+//     {
+        
+//     }
+
+//     void LateUpdate()
+//     {
+        
+//         switch (type)
+//         {
+//             case InfoType.Exp: 
+//                     float curExp = GameManager.instance.exp;
+//                     float maxExp = GameManager.instance.nextExp[Mathf.Min(GameManager.instance.level, GameManager.instance.nextExp.Length - 1)];
+//                     expSlider.value = curExp / maxExp;
+                
+//                     break;
+//             case InfoType.Level:
+//                 levelText.text = string.Format("Lv.{0:F0}", GameManager.instance.level);
+//                 break;
+//             case InfoType.Kill:
+//                 killText.text = string.Format("{0:F0}", GameManager.instance.kill);
+//                 break;
+//             case InfoType.Time:
+//                 float remainTime = GameManager.instance.maxGameTime - GameManager.instance.gameTime;
+//                 int min = Mathf.FloorToInt(remainTime / 60);
+//                 int sec = Mathf.FloorToInt(remainTime % 60);
+//                 timeText.text = string.Format("{0:D2}:{1:D2}", min, sec);
+//                 break;
+//             case InfoType.Health:
+//                 float curHealth = GameManager.instance.health;
+//                 float maxHealth = GameManager.instance.maxHealth;
+//                 healthSlider.value = curHealth / maxHealth;
+//                 break;
+
+//         }
+//     }
+// }
 using UnityEngine;
 using UnityEngine.UI;
 
 public class HUD : MonoBehaviour
 {
-
-    public enum InfoType { Exp, Level, Kill, Time, Health }
-    public InfoType type;
-
-    Text myText;
-    public Slider mySlider;
+    private Slider expSlider;
+    private Slider healthSlider;
+    private Text levelText;
+    private Text timerText;
 
     void Awake()
     {
-        myText = GetComponent<Text>();
-        // if (mySlider == null)
-        // {
-        //     Debug.LogWarning($"HUD Slider not found!");
-        //     mySlider = GetComponentInChildren<Slider>(true);
-        // }
-        // if (mySlider == null)
-        // {
-        //     Slider[] sliders = GetComponentsInChildren<Slider>(true);
-        //     if (sliders.Length > 0)
-        //     {
-        //         mySlider = sliders[0];
-        //     }
-        //     else
-        //     {
-        //         Debug.LogWarning("HUD Slider not found in children!");
-        //     }
-        // }
-        // var sliders = GetComponentsInChildren<Slider>();
-        //     for (int i = 0; i < sliders.Length; i++)
-        //     {
-        //         if (sliders[i].name == "HUD")
-        //         {
-        //             mySlider = sliders[i];
-        //         }
-        //         Debug.Log("Slider found: " + sliders[i].name);
-        //     }
-    }  
-    
-    void Start()
-    {
-        // Debug.LogWarning($"HUD ({type}) Slider not found!");
+        // 각 오브젝트를 이름으로 찾아서 컴포넌트 할당
+        expSlider = transform.Find("Exp")?.GetComponent<Slider>();
+        levelText = transform.Find("Level")?.GetComponent<Text>();
+        timerText = transform.Find("Timer")?.GetComponent<Text>();
+        healthSlider = transform.Find("Health/HealthBar")?.GetComponent<Slider>();
     }
 
     void LateUpdate()
     {
-        
-        switch (type)
-        {
-            case InfoType.Exp:
-                if (mySlider == null)
-                {
-                   
-                }
-                else
-                {
-                    float curExp = GameManager.instance.exp;
-                    float maxExp = GameManager.instance.nextExp[Mathf.Min(GameManager.instance.level, GameManager.instance.nextExp.Length - 1)];
-                    mySlider.value = curExp / maxExp;
-                }
-                    break;
-            case InfoType.Level:
-                myText.text = string.Format("Lv.{0:F0}", GameManager.instance.level);
-                break;
-            case InfoType.Kill:
-                myText.text = string.Format("{0:F0}", GameManager.instance.kill);
-                break;
-            case InfoType.Time:
-                float remainTime = GameManager.instance.maxGameTime - GameManager.instance.gameTime;
-                int min = Mathf.FloorToInt(remainTime / 60);
-                int sec = Mathf.FloorToInt(remainTime % 60);
-                myText.text = string.Format("{0:D2}:{1:D2}", min, sec);
-                break;
-            case InfoType.Health:
-                float curHealth = GameManager.instance.health;
-                float maxHealth = GameManager.instance.maxHealth;
-                mySlider.value = curHealth / maxHealth;
-                break;
+        var gm = GameManager.instance;
+        if (gm == null) return;
 
+        if (expSlider)
+        {
+            float curExp = gm.exp;
+            float maxExp = gm.nextExp[Mathf.Min(gm.level, gm.nextExp.Length - 1)];
+            expSlider.value = curExp / maxExp;
         }
+
+        // 레벨 텍스트
+        if (levelText)
+            levelText.text = $"Lv.{gm.level:0}";
+
+        // 타이머
+        if (timerText)
+        {
+            float remain = gm.maxGameTime - gm.gameTime;
+            int min = Mathf.FloorToInt(remain / 60);
+            int sec = Mathf.FloorToInt(remain % 60);
+            timerText.text = $"{min:D2}:{sec:D2}";
+        }
+
+        // 체력 바
+        if (healthSlider)
+            healthSlider.value = gm.health / gm.maxHealth;
     }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,14 +15,14 @@ public class GameManager : MonoBehaviour
     public int level;
     public int kill;
     public int exp;
-    public int health;
-    public int maxHealth = 100;
+    public float health;
+    public float maxHealth = 100;
     public int[] nextExp = { 10, 30, 60, 100, 150, 210, 280, 360, 450, 600 };
     [Header("# Game Object")]
     public Player player;
     public PoolManager pool;
     public LevelUp uiLevelUp;
-
+    public GameObject uiResult;
     void Awake()
     {
         instance = this;
@@ -31,17 +32,33 @@ public class GameManager : MonoBehaviour
     {
 
         health = maxHealth;
-
-        
         uiLevelUp.Select(0);
         isLive = true;
     }
 
+    public void GameOver()
+    {
+        StartCoroutine(GameOverRoutine());
+    }
+    
+    IEnumerator GameOverRoutine()
+    {
+        isLive = false;
+        yield return new WaitForSeconds(0.5f);
+        uiResult.SetActive(true);
+        Stop();
+        
+    }
+
+    public void GameRetry()
+    {
+        SceneManager.LoadScene(0);
+    }
     void Update()
     {
-        if(!isLive)
+        if (!isLive)
             return;
-        
+
         gameTime += Time.deltaTime;
 
         if (gameTime > maxGameTime)
@@ -50,6 +67,8 @@ public class GameManager : MonoBehaviour
 
         }
     }
+    
+
 
     public void GetExp()
     {
